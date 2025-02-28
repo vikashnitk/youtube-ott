@@ -78,7 +78,14 @@ class UserFilteredDataView(APIView):
                             total_duration = latest_episode_data.duration
                             cutoff_duration = latest_episode_data.cutoff_duration
                             play_time = latest_episode.play_time
-                            if play_time<=(total_duration-cutoff_duration): 
+
+                            # Check if the current episode is the last in the series
+                            is_last_episode = not Episode.objects.filter(
+                                tv_show=tvshow_data, episode_number__gt=latest_episode_data.episode_number
+                            ).exists()
+
+                            # Apply play_time condition only if it's the last episode
+                            if not is_last_episode or play_time <= (total_duration - cutoff_duration):  
                                 video_data.append({
                                     "id": latest_episode.id,
                                     "type": "tvshow",
@@ -88,8 +95,8 @@ class UserFilteredDataView(APIView):
                                     "name": tvshow_data.title,
                                     "episode_title": latest_episode_data.title,
                                     "cutoff_duration": cutoff_duration
-                                    # sample comment
                                 })
+
 
         return Response(video_data, status=200)
 
