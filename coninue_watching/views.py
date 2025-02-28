@@ -57,7 +57,7 @@ class UserFilteredDataView(APIView):
                             "video_url": movie_data.video_url,
                             "play_time": play_time,
                             # 'total_duration': movie_data.duration,
-                            # 'cutoff_duration': movie_data.cutoff_duration,
+                            'cutoff_duration': cutoff_duration,
                             "thumbnail": f"{movie_data.thumbnail_movie}",
                             "name": entry.movie.title
                         })
@@ -86,7 +86,8 @@ class UserFilteredDataView(APIView):
                                     "play_time": play_time,
                                     "thumbnail": f"{tvshow_data.thumbnail_tvshow}",
                                     "name": tvshow_data.title,
-                                    "episode_title": latest_episode_data.title
+                                    "episode_title": latest_episode_data.title,
+                                    "cutoff_duration": cutoff_duration
                                 })
 
         return Response(video_data, status=200)
@@ -102,7 +103,7 @@ class UserFilteredDataView(APIView):
         try:
             # Find the item in the user's view history by ID
             entry = ViewHistory.objects.filter(user=user, id=pk).first()
-            print(f"entry: {entry}")
+            # print(f"entry: {entry}")
 
             if entry:
                 if entry.episode:
