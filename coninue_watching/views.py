@@ -59,7 +59,8 @@ class UserFilteredDataView(APIView):
                             # 'total_duration': movie_data.duration,
                             'cutoff_duration': cutoff_duration,
                             "thumbnail": f"{movie_data.thumbnail_movie}",
-                            "name": entry.movie.title
+                            "name": entry.movie.title,
+                            "timestamp": entry.timestamp
                         })
 
             if entry.episode:
@@ -94,7 +95,8 @@ class UserFilteredDataView(APIView):
                                     "thumbnail": f"{tvshow_data.thumbnail_tvshow}",
                                     "name": tvshow_data.title,
                                     "episode_title": latest_episode_data.title,
-                                    "cutoff_duration": cutoff_duration
+                                    "cutoff_duration": cutoff_duration,
+                                    "timestamp": latest_episode.timestamp
                                 })
 
 
