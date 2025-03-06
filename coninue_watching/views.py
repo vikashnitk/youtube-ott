@@ -96,7 +96,7 @@ class UserFilteredDataView(APIView):
                                     "name": tvshow_data.title,
                                     "episode_title": latest_episode_data.title,
                                     "cutoff_duration": cutoff_duration,
-                                    "timestamp": latest_episode.timestamp
+                                    "timestamp": latest_episode.timestamp #
                                 })
 
 
