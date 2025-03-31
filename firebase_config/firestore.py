@@ -15,10 +15,15 @@ def listen_for_user_deletions():
     """
     Listens for deletions in the Firestore 'users' collection and deletes the corresponding user in the Django database.
     """
+    print("Starting Firestore listener for user deletions...")
+
     def on_snapshot(col_snapshot, changes, read_time):
+        print("Snapshot received.")
         for change in changes:
+            print(f"Change detected: {change.type.name}")
             if change.type.name == 'REMOVED':
                 uid = change.document.id
+                print(f"Document with UID {uid} was removed.")
                 try:
                     user = User.objects.get(uid=uid)
                     user.delete()
