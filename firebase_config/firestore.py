@@ -15,18 +15,21 @@ def listen_for_user_deletions():
     print("Initializing Firestore listener...")
 
     def on_snapshot(col_snapshot, changes, read_time):
-        print("Snapshot received.")
-        for change in changes:
-            print(f"Change detected: {change.type.name}")
-            if change.type.name == 'REMOVED':
-                uid = change.document.id
-                print(f"Document with UID {uid} was removed.")
-                try:
-                    user = User.objects.get(uid=uid)
-                    user.delete()
-                    print(f"User with UID {uid} deleted from Django database.")
-                except User.DoesNotExist:
-                    print(f"User with UID {uid} does not exist in Django database.")
+        try:
+            print("Snapshot received.")
+            for change in changes:
+                print(f"Change detected: {change.type.name}")
+                if change.type.name == 'REMOVED':
+                    uid = change.document.id
+                    print(f"Document with UID {uid} was removed.")
+                    try:
+                        user = User.objects.get(uid=uid)
+                        user.delete()
+                        print(f"User with UID {uid} deleted from Django database.")
+                    except User.DoesNotExist:
+                        print(f"User with UID {uid} does not exist in Django database.")
+        except Exception as e:
+            print(f"Error in Firestore listener: {e}")
 
     try:
         users_collection = db.collection('users')
