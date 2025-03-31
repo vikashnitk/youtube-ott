@@ -12,10 +12,7 @@ def get_user_email(uid):
     return None
 
 def listen_for_user_deletions():
-    """
-    Listens for deletions in the Firestore 'users' collection and deletes the corresponding user in the Django database.
-    """
-    print("Starting Firestore listener for user deletions...")
+    print("Initializing Firestore listener...")
 
     def on_snapshot(col_snapshot, changes, read_time):
         print("Snapshot received.")
@@ -31,5 +28,9 @@ def listen_for_user_deletions():
                 except User.DoesNotExist:
                     print(f"User with UID {uid} does not exist in Django database.")
 
-    users_collection = db.collection('users')
-    users_collection.on_snapshot(on_snapshot)
+    try:
+        users_collection = db.collection('users')
+        users_collection.on_snapshot(on_snapshot)
+        print("Firestore listener started successfully.")
+    except Exception as e:
+        print(f"Error initializing Firestore listener: {e}")
