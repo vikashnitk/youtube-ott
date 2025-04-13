@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
 from user_view_history.models import ViewHistory
 from coninue_watching.models import ViewHistory as ContinueWatchingViewHistory  # Adjust if the model name differs
 
@@ -11,10 +9,12 @@ class User(models.Model):
     def __str__(self):
         return f"{self.uid} ({self.email})"
 
-@receiver(pre_delete, sender=User)
-def delete_user_related_data(sender, instance, **kwargs):
-    # Delete related data in user_view_history
-    ViewHistory.objects.filter(user=instance).delete()
+    def delete(self, *args, **kwargs):
+        # Delete related data in user_view_history
+        ViewHistory.objects.filter(user=self).delete()
 
-    # Delete related data in coninue_watching
-    ContinueWatchingViewHistory.objects.filter(user=instance).delete()
+        # Delete related data in coninue_watching
+        ContinueWatchingViewHistory.objects.filter(user=self).delete()
+
+        # Call the parent class's delete method
+        super().delete(*args, **kwargs)
