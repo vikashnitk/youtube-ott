@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from firebase_config.auth import verify_token
 from firebase_config.firestore import get_user_email
 from users.models import User
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 def current_user_view(request):
     """
@@ -35,3 +37,29 @@ def current_user_view(request):
         print(f"User with UID {uid} and email {email} already exists.")
 
     return JsonResponse({'uid': uid, 'email': email})
+
+@csrf_exempt
+def delete_user_view(request):
+    """
+    Deletes a user based on their UID.
+    """
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Invalid HTTP method. Use DELETE.'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        uid = body.get('uid')
+
+        if not uid:
+            return JsonResponse({'error': 'UID is required to delete a user.'}, status=400)
+
+        # Attempt to find and delete the user
+        try:
+            user = User.objects.get(uid=uid)
+            user.delete()
+            return JsonResponse({'message': f'User with UID {uid} has been deleted.'}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': f'User with UID {uid} does not exist.'}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON payload.'}, status=400)
