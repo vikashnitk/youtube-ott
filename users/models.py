@@ -1,6 +1,5 @@
 from django.db import models
-from user_view_history.models import ViewHistory
-from coninue_watching.models import ViewHistory as ContinueWatchingViewHistory  # Adjust if the model name differs
+from django.apps import apps  # Import apps to dynamically reference models
 
 class User(models.Model):
     uid = models.CharField(max_length=255, unique=True)  # Store Firebase UID, unique for each user
@@ -10,6 +9,10 @@ class User(models.Model):
         return f"{self.uid} ({self.email})"
 
     def delete(self, *args, **kwargs):
+        # Dynamically get the ViewHistory models to avoid circular imports
+        ViewHistory = apps.get_model('user_view_history', 'ViewHistory')
+        ContinueWatchingViewHistory = apps.get_model('coninue_watching', 'ViewHistory')
+
         # Delete related data in user_view_history
         ViewHistory.objects.filter(user=self).delete()
 
