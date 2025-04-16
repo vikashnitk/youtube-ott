@@ -11,13 +11,13 @@ class User(models.Model):
     def delete(self, *args, **kwargs):
         # Dynamically get the ViewHistory models to avoid circular imports
         ViewHistory = apps.get_model('user_view_history', 'ViewHistory')
-        ContinueWatchingViewHistory = apps.get_model('coninue_watching', 'ContinueWatchingViewHistory')  # Fixed typo
+        # ContinueWatchingViewHistory = apps.get_model('coninue_watching', 'ContinueWatchingViewHistory')  # Fixed typo
 
         # Delete related data in user_view_history
         ViewHistory.objects.filter(user=self).delete()
 
         # Delete related data in coninue_watching
-        ContinueWatchingViewHistory.objects.filter(user=self).delete()
+        # ContinueWatchingViewHistory.objects.filter(user=self).delete()
 
         # Call the parent class's delete method
         super().delete(*args, **kwargs)

@@ -45,8 +45,8 @@ class TrackVideoView(APIView):
 
         video_url = request.data.get('video_url')
         play_time = request.data.get('play_time')
-        print(f"video_url: {video_url}")
-        print(f"play_time: {play_time}")
+        # print(f"video_url: {video_url}")
+        # print(f"play_time: {play_time}")
 
         if not video_url or not play_time:
             return Response({"error": "video_url and play_time are required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,8 +54,8 @@ class TrackVideoView(APIView):
         # Check if video_url corresponds to a Movie or Episode
         movie = Movie.objects.filter(video_url=video_url).first()
         episode = Episode.objects.filter(video_url=video_url).first()
-        print(f"movie:{movie}")
-        print(f"episode:{episode}")
+        # print(f"movie:{movie}")
+        # print(f"episode:{episode}")
 
         if movie:
             # Create or update the user's view history for a movie
