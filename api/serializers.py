@@ -9,32 +9,32 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True)  # Nested genre serializer
-    thumbnail_movie = serializers.SerializerMethodField()
+    # thumbnail_movie = serializers.SerializerMethodField()
 
     class Meta:
         model = Movie
         fields = [
             'id', 'title', 'description', 'genres', 'release_year', 
-            'thumbnail_movie', 'video_url','duration','cutoff_duration'
+            'video_url','duration','cutoff_duration'
         ]
 
-    def get_thumbnail_movie(self, obj):
-        return obj.thumbnail_movie.name if obj.thumbnail_movie else None
+    # def get_thumbnail_movie(self, obj):
+    #     return obj.thumbnail_movie.name if obj.thumbnail_movie else None
 
 
 class TVShowSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True)  # Nested genre serializer
-    thumbnail_tvshow = serializers.SerializerMethodField()
+    # thumbnail_tvshow = serializers.SerializerMethodField()
 
     class Meta:
         model = TVShow
         fields = [
             'id', 'title', 'description', 'genres', 'release_year', 
-            'number_of_seasons', 'thumbnail_tvshow'
+            'number_of_seasons'
         ]
 
-    def get_thumbnail_tvshow(self, obj):
-        return obj.thumbnail_tvshow.name if obj.thumbnail_tvshow else None
+    # def get_thumbnail_tvshow(self, obj):
+    #     return obj.thumbnail_tvshow.name if obj.thumbnail_tvshow else None
 
 class EpisodeSerializer(serializers.ModelSerializer):
     tv_show = serializers.StringRelatedField()  # Display TV show title instead of ID
@@ -46,7 +46,7 @@ class EpisodeSerializer(serializers.ModelSerializer):
         model = Episode
         fields = [
             'id', 'tv_show', 'season_number', 'episode_number', 'title',
-            'thumbnail_episode', 'video_url', 'tv_show_details',
+            'video_url', 'tv_show_details',
             'total_seasons', 'next_episode','duration','cutoff_duration'
         ]
 
