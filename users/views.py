@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from firebase_config.auth import verify_token
-from firebase_config.firestore import get_user_email,get_user_details
+from firebase_config.firestore import get_user_email
 from users.models import User
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -12,6 +12,14 @@ def calculate_age(dob_str):
     today = datetime.today().date()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     return age
+
+def get_user_details(uid):
+    from firebase_admin import firestore
+    db = firestore.client()
+    doc = db.collection('users').document(uid).get()
+    if doc.exists:
+        return doc.to_dict()
+    return None
 
 def current_user_view(request):
     """
