@@ -9,3 +9,9 @@ def get_user_email(uid):
     if doc.exists:
         return doc.to_dict().get('email')
     return None
+
+def get_user_details(uid):
+    doc = db.collection('users').document(uid).get()
+    if doc.exists:
+        return doc.to_dict()
+    return None
