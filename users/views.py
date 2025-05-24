@@ -1,9 +1,17 @@
 from django.http import JsonResponse
 from firebase_config.auth import verify_token
-from firebase_config.firestore import get_user_email
+from firebase_config.firestore import get_user_email,get_user_details
 from users.models import User
 from django.views.decorators.csrf import csrf_exempt
 import json
+from datetime import datetime
+
+def calculate_age(dob_str):
+    # dob_str should be in 'YYYY-MM-DD' format
+    dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+    today = datetime.today().date()
+    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+    return age
 
 def current_user_view(request):
     """
@@ -25,18 +33,26 @@ def current_user_view(request):
     print(f"uid:{uid}")
     print(f"email:{email}")
 
-    # Check if the user already exists in the database
-    user, created = User.objects.get_or_create(
+    # Fetch date of birth from Firestore
+    user_details = get_user_details(uid)  # Should return dict with 'date_of_birth'
+    date_of_birth = user_details.get('date_of_birth') if user_details else None
+
+    # Calculate age if DOB is available
+    age = calculate_age(date_of_birth) if date_of_birth else None
+
+    # Check if the user already exists in the database, update or create age
+    user, created = User.objects.update_or_create(
         uid=uid,
-        email=email
+        email=email,
+        defaults={'age': age}
     )
 
     if created:
         print(f"User with UID {uid} and email {email} created.")
     else:
-        print(f"User with UID {uid} and email {email} already exists.")
+        print(f"User with UID {uid} and email {email} already exists or updated.")
 
-    return JsonResponse({'uid': uid, 'email': email})
+    return JsonResponse({'uid': uid, 'email': email, 'date_of_birth': date_of_birth, 'age': age})
 
 @csrf_exempt
 def delete_user_view(request):
