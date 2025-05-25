@@ -62,6 +62,15 @@ def current_user_view(request):
     )
 
     if created:
+        user_details = get_user_details(uid)
+        date_of_birth = user_details.get('userDob') if user_details else None
+        print(f"user_details1:{user_details}")
+        age = calculate_age(date_of_birth) if date_of_birth else None
+        user, created = User.objects.update_or_create(
+            uid=uid,
+            email=email,
+            age=age
+        )
         print(f"User with UID {uid} and email {email} created.")
     else:
         print(f"User with UID {uid} and email {email} already exists or updated.")
