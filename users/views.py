@@ -45,9 +45,9 @@ def current_user_view(request):
     print(f"email:{email}")
 
     # Fetch date of birth from Firestore
-    user_details = get_user_details(uid)  # Should return dict with 'date_of_birth'
+    user_details = get_user_details(uid)  # Should return dict with 'userDob'
     print(f"user_details:{user_details}")
-    date_of_birth = user_details.get('date_of_birth') if user_details else None
+    date_of_birth = user_details.get('userDob') if user_details else None
 
     print(f"date_of_birth:{date_of_birth}")    
 
@@ -66,7 +66,7 @@ def current_user_view(request):
     else:
         print(f"User with UID {uid} and email {email} already exists or updated.")
 
-    return JsonResponse({'uid': uid, 'email': email, 'date_of_birth': date_of_birth, 'age': age})
+    return JsonResponse({'uid': uid, 'email': email, 'age': age})
 
 @csrf_exempt
 def delete_user_view(request):
