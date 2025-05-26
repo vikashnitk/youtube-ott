@@ -3,14 +3,21 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from .models import Movie, TVShow, Episode
 from .serializers import MovieSerializer, TVShowSerializer, EpisodeSerializer
+from users.models import User
 
 class MovieModelList(generics.ListAPIView):
     serializer_class = MovieSerializer
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        queryset = Movie.objects.filter(title__icontains=title)
+        user = self.request.user  
+        user_age = getattr(user, 'age', 13) 
 
+        queryset = Movie.objects.filter(
+            title__icontains=title,
+            age_rating__lte=user_age
+        )
+        print(f"Queryset for movie '{title}': {queryset}")
         if not queryset.exists():
             raise NotFound(f"No movies found with title '{title}'.")
 
@@ -21,8 +28,14 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        queryset = TVShow.objects.filter(title__icontains=title)
+        user = self.request.user  
+        user_age = getattr(user, 'age', 13) 
 
+        queryset = TVShow.objects.filter(
+            title__icontains=title,
+            age_rating__lte=user_age
+        )
+        print(f"Queryset for tvshow '{title}': {queryset}")
         if not queryset.exists():
             raise NotFound(f"No TV shows found with title '{title}'.")
 
@@ -64,8 +77,18 @@ class SearchModelList(generics.ListAPIView):
     
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '').strip()
-        movies = Movie.objects.filter(title__icontains=query)
-        tv_shows = TVShow.objects.filter(title__icontains=query)
+
+        user = self.request.user  
+        user_age = getattr(user, 'age', 13)    
+
+        movies = Movie.objects.filter(
+            title__icontains=query,
+            age_rating__lte=user_age
+        )
+        tv_shows = TVShow.objects.filter(
+            title__icontains=query,
+            age_rating__lte=user_age
+        )
 
         movies_serializer = MovieSerializer(movies, many=True)
         tv_shows_serializer = TVShowSerializer(tv_shows, many=True)
