@@ -52,7 +52,9 @@ class EpisodeModelList(generics.ListAPIView):
             season_number = int(self.kwargs.get('season_number'))
 
             queryset = Episode.objects.filter(
-                tv_show__title__iexact=show_title, season_number=season_number, age_rating__lte=user_age
+                tv_show__title__iexact=show_title, 
+                season_number=season_number, 
+                tv_show__age_rating__lte=user_age
             )
             print(f"Queryset for tvshow '{show_title}': {queryset}")
             if not queryset.exists():
