@@ -43,5 +43,9 @@ class Episode(models.Model):
     duration = models.IntegerField()
     cutoff_duration = models.IntegerField()
 
+    @property
+    def age_rating(self):
+        return self.tv_show.age_rating
+
     def __str__(self):
         return f'{self.tv_show.title} - S{self.season_number}E{self.episode_number}: {self.title}'
