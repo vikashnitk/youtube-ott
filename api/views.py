@@ -47,12 +47,14 @@ class EpisodeModelList(generics.ListAPIView):
     def get_queryset(self):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
+            user = self.request.user  
+            user_age = getattr(user, 'age', 13) 
             season_number = int(self.kwargs.get('season_number'))
 
             queryset = Episode.objects.filter(
-                tv_show__title__iexact=show_title, season_number=season_number
+                tv_show__title__iexact=show_title, season_number=season_number, age_rating__lte=user_age
             )
-
+            print(f"Queryset for tvshow '{show_title}': {queryset}")
             if not queryset.exists():
                 raise NotFound(f"No episodes found for '{show_title}' season {season_number}.")
 
