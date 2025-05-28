@@ -11,6 +11,7 @@ class MovieModelList(generics.ListAPIView):
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
         user = self.request.user
+        print(f"User: {user}")
         if user.is_authenticated and hasattr(user, 'age'):
             user_age = user.age
         else:
