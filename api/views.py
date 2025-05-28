@@ -28,7 +28,11 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user_age = User.age
+        user = getattr(self.request, 'user', None)
+        if user and hasattr(user, 'age') and user.age is not None:
+            user_age = user.age
+        else:
+            user_age = 13
         print(f"User age: {user_age}")
 
         queryset = TVShow.objects.filter(
