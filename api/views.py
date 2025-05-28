@@ -10,12 +10,7 @@ class MovieModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user
-        print(f"User: {user}")
-        if user.is_authenticated and hasattr(user, 'age'):
-            user_age = user.age
-        else:
-            user_age = 13
+        user_age = User.age
         print(f"User age: {user_age}")
 
         queryset = Movie.objects.filter(
@@ -33,11 +28,7 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user
-        if user.is_authenticated and hasattr(user, 'age'):
-            user_age = user.age
-        else:
-            user_age = 13
+        user_age = User.age
         print(f"User age: {user_age}")
 
         queryset = TVShow.objects.filter(
