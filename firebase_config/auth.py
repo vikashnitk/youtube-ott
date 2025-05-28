@@ -35,6 +35,7 @@ def verify_token(id_token):
 
 class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
+        print("FirebaseAuthentication called")
         auth_header = request.headers.get('Authorization')
         if not auth_header or not auth_header.startswith('Bearer '):
             return None
