@@ -33,12 +33,21 @@ class MovieModelList(generics.ListAPIView):
     serializer_class = MovieSerializer
     authentication_classes = [FirebaseAuthentication]
 
-    def get_queryset(self):
-        title = self.kwargs.get('title', '').strip()
-        user = self.request.user
+    def get_age(self, request):
+        user = request.user
+        if not user:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=401
+            )
         user = User.objects.filter(user=user).first()
         user_age = user.age if user else 13
         print(f"User age: {user_age}")
+        return user_age
+
+    def get_queryset(self):
+        title = self.kwargs.get('title', '').strip()
+        user_age = self.get_age(self.request)
 
         queryset = Movie.objects.filter(
             title__icontains=title,
@@ -56,9 +65,7 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user
-        user = User.objects.filter(user=user).first()
-        user_age = user.age if user else 13
+        user_age = self.get_age(self.request)
         print(f"User age: {user_age}")
 
         queryset = TVShow.objects.filter(
@@ -78,9 +85,7 @@ class EpisodeModelList(generics.ListAPIView):
     def get_queryset(self):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
-            user = self.request.user
-            user = User.objects.filter(user=user).first()
-            user_age = user.age if user else 13
+            user_age = self.get_age(self.request)
             season_number = int(self.kwargs.get('season_number'))
 
             queryset = Episode.objects.filter(
@@ -115,9 +120,7 @@ class SearchModelList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '').strip()
 
-        user = self.request.user
-        user = User.objects.filter(user=user).first()
-        user_age = user.age if user else 13
+        user_age = self.get_age(self.request)
 
         movies = Movie.objects.filter(
             title__icontains=query,
