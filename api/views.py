@@ -10,7 +10,7 @@ class MovieModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = User.objects.get(id=self.request.user.id)
+        user = self.request.user
         user_age = getattr(user, 'age', 13)
         print(f"User age: {user_age}")
 
@@ -29,7 +29,7 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = User.objects.get(id=self.request.user.id)
+        user = self.request.user
         user_age = getattr(user, 'age', 13)
         print(f"User age: {user_age}")
 
