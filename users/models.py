@@ -7,7 +7,7 @@ class User(models.Model):
     age = models.PositiveIntegerField(null=True, blank=True)  # Store the user's age, can be null or blank
 
     def __str__(self):
-        return f"{self.uid} ({self.email})"
+        return f"{self.uid} ({self.email}) - Age: {self.age})"
 
     def delete(self, *args, **kwargs):
         # Dynamically get the ViewHistory models to avoid circular imports
