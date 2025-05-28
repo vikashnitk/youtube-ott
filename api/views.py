@@ -4,17 +4,38 @@ from rest_framework.exceptions import NotFound
 from .models import Movie, TVShow, Episode
 from .serializers import MovieSerializer, TVShowSerializer, EpisodeSerializer
 from users.models import User
+from firebase_admin import auth
+from rest_framework.authentication import BaseAuthentication
+
+class FirebaseAuthentication(BaseAuthentication):
+    def authenticate(self, request):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return None
+
+        id_token = auth_header.split('Bearer ')[1]
+        try:
+            # Decode and verify the Firebase token
+            decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+
+            # Get or create the user using your custom model's identifier (e.g., 'uid' or 'email')
+            user, _ = User.objects.get_or_create(uid=uid)
+
+            # Return the user object and None for the token
+            return (user, None)
+        except Exception as e:
+            print(f"Authentication failed: {e}")
+            return None
 
 class MovieModelList(generics.ListAPIView):
     serializer_class = MovieSerializer
+    authentication_classes = [FirebaseAuthentication]
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = getattr(self.request, 'user', None)
-        if user and hasattr(user, 'age') and user.age is not None:
-            user_age = user.age
-        else:
-            user_age = 13
+        user = self.request.user
+        user_age = getattr(user, 'age', 13)
         print(f"User age: {user_age}")
 
         queryset = Movie.objects.filter(
@@ -29,14 +50,12 @@ class MovieModelList(generics.ListAPIView):
 
 class TVShowModelList(generics.ListAPIView):
     serializer_class = TVShowSerializer
+    authentication_classes = [FirebaseAuthentication]
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = getattr(self.request, 'user', None)
-        if user and hasattr(user, 'age') and user.age is not None:
-            user_age = user.age
-        else:
-            user_age = 13
+        user = self.request.user
+        user_age = getattr(user, 'age', 13)
         print(f"User age: {user_age}")
 
         queryset = TVShow.objects.filter(
@@ -51,12 +70,13 @@ class TVShowModelList(generics.ListAPIView):
 
 class EpisodeModelList(generics.ListAPIView):
     serializer_class = EpisodeSerializer
+    authentication_classes = [FirebaseAuthentication]
 
     def get_queryset(self):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
-            user = self.request.user  
-            user_age = getattr(user, 'age', 13) 
+            user = self.request.user
+            user_age = getattr(user, 'age', 13)
             season_number = int(self.kwargs.get('season_number'))
 
             queryset = Episode.objects.filter(
@@ -86,12 +106,13 @@ class EpisodeModelList(generics.ListAPIView):
 
 class SearchModelList(generics.ListAPIView):
     """A view to handle searching for movies and TV shows."""
+    authentication_classes = [FirebaseAuthentication]
     
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '').strip()
 
-        user = self.request.user  
-        user_age = getattr(user, 'age', 13)    
+        user = self.request.user
+        user_age = getattr(user, 'age', 13)  
 
         movies = Movie.objects.filter(
             title__icontains=query,
