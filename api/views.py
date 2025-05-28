@@ -6,27 +6,28 @@ from .serializers import MovieSerializer, TVShowSerializer, EpisodeSerializer
 from users.models import User
 from firebase_admin import auth
 from rest_framework.authentication import BaseAuthentication
+from firebase_config.auth import FirebaseAuthentication
 
-class FirebaseAuthentication(BaseAuthentication):
-    def authenticate(self, request):
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return None
+# class FirebaseAuthentication(BaseAuthentication):
+#     def authenticate(self, request):
+#         auth_header = request.headers.get('Authorization')
+#         if not auth_header or not auth_header.startswith('Bearer '):
+#             return None
 
-        id_token = auth_header.split('Bearer ')[1]
-        try:
-            # Decode and verify the Firebase token
-            decoded_token = auth.verify_id_token(id_token)
-            uid = decoded_token['uid']
+#         id_token = auth_header.split('Bearer ')[1]
+#         try:
+#             # Decode and verify the Firebase token
+#             decoded_token = auth.verify_id_token(id_token)
+#             uid = decoded_token['uid']
 
-            # Get or create the user using your custom model's identifier (e.g., 'uid' or 'email')
-            user, _ = User.objects.get_or_create(uid=uid)
+#             # Get or create the user using your custom model's identifier (e.g., 'uid' or 'email')
+#             user, _ = User.objects.get_or_create(uid=uid)
 
-            # Return the user object and None for the token
-            return (user, None)
-        except Exception as e:
-            print(f"Authentication failed: {e}")
-            return None
+#             # Return the user object and None for the token
+#             return (user, None)
+#         except Exception as e:
+#             print(f"Authentication failed: {e}")
+#             return None
 
 class MovieModelList(generics.ListAPIView):
     serializer_class = MovieSerializer
