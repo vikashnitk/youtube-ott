@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from .models import Movie, TVShow, Episode
 from .serializers import MovieSerializer, TVShowSerializer, EpisodeSerializer
-from users.models import User
+from users.views import global_user_age
 from firebase_admin import auth
 from rest_framework.authentication import BaseAuthentication
 from firebase_config.auth import FirebaseAuthentication
@@ -35,9 +35,7 @@ class MovieModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user
-        print(f"Authenticated user UID: {user.uid}")
-        user_age = user.age
+        user_age = global_user_age
         print(f"User age: {user_age}")
 
         queryset = Movie.objects.filter(
@@ -56,8 +54,7 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user
-        user_age = user.age
+        user_age = global_user_age
         print(f"User age: {user_age}")
 
         queryset = TVShow.objects.filter(
@@ -77,8 +74,7 @@ class EpisodeModelList(generics.ListAPIView):
     def get_queryset(self):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
-            user = self.request.user
-            user_age = user.age
+            user_age = global_user_age
             season_number = int(self.kwargs.get('season_number'))
 
             queryset = Episode.objects.filter(
@@ -113,8 +109,7 @@ class SearchModelList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '').strip()
 
-        user = self.request.user
-        user_age = getattr(user, 'age', 13)  
+        user_age = global_user_age
 
         movies = Movie.objects.filter(
             title__icontains=query,

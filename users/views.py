@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from datetime import datetime
 
+global_user_age = None
+
 def calculate_age(dob_str):
     # Handles 'YYYY-MM-DD' and 'YYYY-MM-DDTHH:MM:SS.sss' formats
     if 'T' in dob_str:
@@ -60,7 +62,8 @@ def current_user_view(request):
         email=email,
         defaults={'age': age}
     )
-
+    global global_user_age
+    global_user_age = age
     if created:
         print(f"User with UID {uid} and email {email} created.")
     else:
