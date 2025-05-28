@@ -40,8 +40,9 @@ class MovieModelList(generics.ListAPIView):
                 {"detail": "Authentication credentials were not provided."},
                 status=401
             )
-        user = User.objects.filter(user=user).first()
-        user_age = user.age if user else 13
+        user_details = User.objects.filter(user=user).first()
+        print(f"user_details: {user_details}")
+        user_age = user_details.age
         print(f"User age: {user_age}")
         return user_age
 
