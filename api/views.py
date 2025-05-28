@@ -10,8 +10,9 @@ class MovieModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user  
-        user_age = getattr(user, 'age', 13) 
+        user = User.objects.get(id=self.request.user.id)
+        user_age = getattr(user, 'age', 13)
+        print(f"User age: {user_age}")
 
         queryset = Movie.objects.filter(
             title__icontains=title,
@@ -28,8 +29,9 @@ class TVShowModelList(generics.ListAPIView):
 
     def get_queryset(self):
         title = self.kwargs.get('title', '').strip()
-        user = self.request.user  
-        user_age = getattr(user, 'age', 13) 
+        user = User.objects.get(id=self.request.user.id)
+        user_age = getattr(user, 'age', 13)
+        print(f"User age: {user_age}")
 
         queryset = TVShow.objects.filter(
             title__icontains=title,
