@@ -55,7 +55,7 @@ class EpisodeModelList(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
-            user = self.request.user
+            user = request.user
             print(f"Request user: {user}")
             user_age = user.age if hasattr(user, 'age') and user.age else 13
             season_number = int(self.kwargs.get('season_number'))
