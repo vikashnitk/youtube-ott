@@ -35,9 +35,7 @@ def verify_token(id_token):
 
 class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        print("FirebaseAuthentication called")
         auth_header = request.headers.get('Authorization')
-        print(f"Authorization header: {auth_header}")
         if not auth_header or not auth_header.startswith('Bearer '):
             return None
         id_token = auth_header.split('Bearer ')[1]
@@ -45,7 +43,6 @@ class FirebaseAuthentication(BaseAuthentication):
             decoded_token = auth.verify_id_token(id_token)
             uid = decoded_token['uid']
             user, _ = User.objects.get_or_create(uid=uid)
-            print(f"Authenticated user: {user.age} with UID: {uid}")
             return (user, None)
         except Exception as e:
             print(f"Authentication failed: {e}")

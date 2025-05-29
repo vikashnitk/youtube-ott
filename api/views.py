@@ -12,7 +12,6 @@ class MovieModelList(APIView):
     def get(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
         user = request.user
-        print(f"User: {user}")
         user_age = user.age if hasattr(user, 'age') else '13'
         queryset = Movie.objects.filter(
             title__icontains=title,
