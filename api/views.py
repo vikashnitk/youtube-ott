@@ -52,7 +52,7 @@ class EpisodeModelList(generics.ListAPIView):
     serializer_class = EpisodeSerializer
     authentication_classes = [FirebaseAuthentication]
 
-    def get_queryset(self):
+    def list(self, request, *args, **kwargs):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
             user = self.request.user

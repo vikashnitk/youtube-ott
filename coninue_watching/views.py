@@ -12,28 +12,11 @@ from users.models import User
 from django.conf import settings
 from firebase_config.auth import FirebaseAuthentication
 
-# class FirebaseAuthentication(BaseAuthentication):
-#     def authenticate(self, request):
-#         auth_header = request.headers.get('Authorization')
-#         if not auth_header or not auth_header.startswith('Bearer '):
-#             return None
-
-#         id_token = auth_header.split('Bearer ')[1]
-#         try:
-#             decoded_token = auth.verify_id_token(id_token)
-#             uid = decoded_token['uid']
-#             user, _ = User.objects.get_or_create(uid=uid)
-#             return (user, None)
-#         except Exception as e:
-#             print(f"Authentication failed: {e}")
-#             return None
-
 class UserFilteredDataView(APIView):
     authentication_classes = [FirebaseAuthentication]
 
     def get(self, request):
         user = request.user
-        print(f"Request user_cont_watch: {user}")
         if not user:
             return Response(
                 {"detail": "Authentication credentials were not provided."},
