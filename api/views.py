@@ -4,11 +4,15 @@ from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from .models import Movie, TVShow, Episode
 from .serializers import MovieSerializer, TVShowSerializer, EpisodeSerializer
+from firebase_config.auth import FirebaseAuthentication
 
 class MovieModelList(APIView):
+    serializer_class = MovieSerializer
+    authentication_classes = [FirebaseAuthentication]
     def get(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
         user = request.user
+        print(f"User: {user}")
         user_age = user.age if hasattr(user, 'age') else '13'
         queryset = Movie.objects.filter(
             title__icontains=title,
@@ -23,6 +27,7 @@ class MovieModelList(APIView):
 
 class TVShowModelList(generics.ListAPIView):
     serializer_class = TVShowSerializer
+    authentication_classes = [FirebaseAuthentication]
 
     def get(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
@@ -41,6 +46,7 @@ class TVShowModelList(generics.ListAPIView):
 
 class EpisodeModelList(generics.ListAPIView):
     serializer_class = EpisodeSerializer
+    authentication_classes = [FirebaseAuthentication]
 
     def get(self, request, *args, **kwargs):
         try:
@@ -76,6 +82,7 @@ class EpisodeModelList(generics.ListAPIView):
 
 class SearchModelList(generics.ListAPIView):
     """A view to handle searching for movies and TV shows."""
+    authentication_classes = [FirebaseAuthentication]
     
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '').strip()
