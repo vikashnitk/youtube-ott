@@ -37,6 +37,7 @@ class FirebaseAuthentication(BaseAuthentication):
     def authenticate(self, request):
         print("FirebaseAuthentication called")
         auth_header = request.headers.get('Authorization')
+        print(f"Authorization header: {auth_header}")
         if not auth_header or not auth_header.startswith('Bearer '):
             return None
         id_token = auth_header.split('Bearer ')[1]
