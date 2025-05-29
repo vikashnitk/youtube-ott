@@ -47,7 +47,7 @@ class EpisodeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'tv_show', 'season_number', 'episode_number', 'title',
             'video_url', 'tv_show_details',
-            'total_seasons', 'next_episode','duration','cutoff_duration'
+            'total_seasons', 'next_episode','duration','cutoff_duration','age_rating'
         ]
 
     def get_total_seasons(self, obj):
