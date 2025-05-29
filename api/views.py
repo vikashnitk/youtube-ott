@@ -53,6 +53,7 @@ class EpisodeModelList(generics.ListAPIView):
             season_number = int(self.kwargs.get('season_number'))
             user = request.user
             user_age = user.age if hasattr(user, 'age') else '13'
+            print(f"User age: {user_age}")  # Debugging line to check user age
             queryset = Episode.objects.filter(
                 tv_show__title__iexact=show_title, 
                 season_number=season_number, 
