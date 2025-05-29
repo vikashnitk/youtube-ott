@@ -47,8 +47,8 @@ def get_age(request):
 class MovieModelList(generics.ListAPIView):
     serializer_class = MovieSerializer
     authentication_classes = [FirebaseAuthentication]
-    
-    def get_queryset(self):
+
+    def get_queryset(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
         user_age = get_age(self.request)
 
@@ -66,7 +66,7 @@ class TVShowModelList(generics.ListAPIView):
     serializer_class = TVShowSerializer
     authentication_classes = [FirebaseAuthentication]
 
-    def get_queryset(self):
+    def get_queryset(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
         user_age = get_age(self.request)
         print(f"User age: {user_age}")
@@ -85,7 +85,7 @@ class EpisodeModelList(generics.ListAPIView):
     serializer_class = EpisodeSerializer
     authentication_classes = [FirebaseAuthentication]
 
-    def get_queryset(self):
+    def get_queryset(self, request, *args, **kwargs):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
             user_age = get_age(self.request)
