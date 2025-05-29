@@ -58,6 +58,7 @@ class EpisodeModelList(generics.ListAPIView):
                 season_number=season_number, 
                 tv_show__age_rating__lte=user_age
             )
+            print(f"Queryset: {queryset}")  # Debugging line to check the queryset
 
             if not queryset.exists():
                 raise NotFound(f"No episodes found for '{show_title}' season {season_number}.")
