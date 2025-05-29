@@ -4,28 +4,12 @@ from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from .models import Movie, TVShow, Episode
 from .serializers import MovieSerializer, TVShowSerializer, EpisodeSerializer
-from firebase_config.auth import FirebaseAuthentication
 
-user_age = None
-
-class UserFilteredDataView(APIView):
-    authentication_classes = [FirebaseAuthentication]
-
-    def get(self, request):
-        user = request.user
-        if not user:
-            return Response(
-                {"detail": "Authentication credentials were not provided."},
-                status=401
-            )
-        global user_age
-        user_age = user.age if hasattr(user, 'age') else '13'
-
-class MovieModelList(generics.ListAPIView):
-    serializer_class = MovieSerializer
-
-    def get_queryset(self):
+class MovieModelList(APIView):
+    def get(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
+        user = request.user
+        user_age = user.age if hasattr(user, 'age') else '13'
         queryset = Movie.objects.filter(
             title__icontains=title,
             age_rating__lte=user_age
@@ -34,13 +18,16 @@ class MovieModelList(generics.ListAPIView):
         if not queryset.exists():
             raise NotFound(f"No movies found with title '{title}'.")
 
-        return queryset
+        serializer = MovieSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class TVShowModelList(generics.ListAPIView):
     serializer_class = TVShowSerializer
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
         title = self.kwargs.get('title', '').strip()
+        user = request.user
+        user_age = user.age if hasattr(user, 'age') else '13'
         queryset = TVShow.objects.filter(
             title__icontains=title,
             age_rating__lte=user_age
@@ -49,16 +36,18 @@ class TVShowModelList(generics.ListAPIView):
         if not queryset.exists():
             raise NotFound(f"No TV shows found with title '{title}'.")
 
-        return queryset
+        serializer = TVShowSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class EpisodeModelList(generics.ListAPIView):
     serializer_class = EpisodeSerializer
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
         try:
             show_title = self.kwargs.get('show_title', '').strip()
             season_number = int(self.kwargs.get('season_number'))
-
+            user = request.user
+            user_age = user.age if hasattr(user, 'age') else '13'
             queryset = Episode.objects.filter(
                 tv_show__title__iexact=show_title, 
                 season_number=season_number, 
@@ -68,7 +57,8 @@ class EpisodeModelList(generics.ListAPIView):
             if not queryset.exists():
                 raise NotFound(f"No episodes found for '{show_title}' season {season_number}.")
 
-            return queryset
+            serializer = EpisodeSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except ValueError:
             raise NotFound("Season number must be an integer.")
@@ -89,6 +79,8 @@ class SearchModelList(generics.ListAPIView):
     
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '').strip()
+        user = request.user
+        user_age = user.age if hasattr(user, 'age') else '13'
         movies = Movie.objects.filter(
             title__icontains=query,
             age_rating__lte=user_age
