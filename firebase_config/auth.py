@@ -44,6 +44,7 @@ class FirebaseAuthentication(BaseAuthentication):
             decoded_token = auth.verify_id_token(id_token)
             uid = decoded_token['uid']
             user, _ = User.objects.get_or_create(uid=uid)
+            print(f"Authenticated user: {user.age} with UID: {uid}")
             return (user, None)
         except Exception as e:
             print(f"Authentication failed: {e}")
