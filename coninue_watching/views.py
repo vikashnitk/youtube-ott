@@ -33,6 +33,7 @@ class UserFilteredDataView(APIView):
 
     def get(self, request):
         user = request.user
+        print(f"Request user_cont_watch: {user}")
         if not user:
             return Response(
                 {"detail": "Authentication credentials were not provided."},
