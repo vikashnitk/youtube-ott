@@ -17,6 +17,7 @@ class Movie(models.Model):
     duration = models.IntegerField()
     cutoff_duration = models.IntegerField()
     age_rating = models.IntegerField()
+    trailer = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -29,6 +30,7 @@ class TVShow(models.Model):
     thumbnail_tvshow = models.ImageField(upload_to='thumbnails/tvshows/', null=True, blank=True)
     number_of_seasons = models.IntegerField(default=1)
     age_rating = models.IntegerField()
+    trailer = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.title
