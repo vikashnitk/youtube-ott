@@ -15,7 +15,7 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = [
             'id', 'title', 'description', 'genres', 'release_year', 
-            'video_url','duration','cutoff_duration', 'age_rating'
+            'video_url','duration','cutoff_duration', 'age_rating','trailer'
         ]
 
     # def get_thumbnail_movie(self, obj):
