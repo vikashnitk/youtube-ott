@@ -30,7 +30,7 @@ class TVShowSerializer(serializers.ModelSerializer):
         model = TVShow
         fields = [
             'id', 'title', 'description', 'genres', 'release_year', 
-            'number_of_seasons','age_rating'
+            'number_of_seasons','age_rating','trailer'
         ]
 
     # def get_thumbnail_tvshow(self, obj):
@@ -47,7 +47,7 @@ class EpisodeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'tv_show', 'season_number', 'episode_number', 'title',
             'video_url', 'tv_show_details',
-            'total_seasons', 'next_episode','duration','cutoff_duration','age_rating'
+            'total_seasons', 'next_episode','duration','cutoff_duration','age_rating','trailer'
         ]
 
     def get_total_seasons(self, obj):
